@@ -110,7 +110,7 @@
 	}
 
   function configure() {
-    const popupUrl=`${window.location.origin}/dialog.html`;
+    const popupUrl=`https://gps-dataservice.github.io/masonry_extension/dialog.html`;
     let defaultPayload="";
     tableau.extensions.ui.displayDialogAsync(popupUrl, defaultPayload, { width: 500, height: 500 }).then((closePayload) => {
       drawChartJS();
