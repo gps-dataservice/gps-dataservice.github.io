@@ -17,24 +17,27 @@ h1 {
   text-align: center;
 }
 
+/*
 .grid {  
   margin: 0 auto;
 }
+*/
 
-/* clearfix */
+
+/* clearfix 
 .grid:after {
   content: '';
   display: block;
   clear: both;
 }
-
+*/
 /* ---- grid-item ---- */
 
 /*
 .grid-sizer {
   width: 20%;
 }
-*/
+
 
 .grid-item {	
   width: 300px;   
@@ -49,16 +52,70 @@ h1 {
   display: block;
   width: 100%;
 }
+*/
 /*
 .grid-item--width2 { width: 240px; }
 .grid-item--width3 { width: 320px; }
 */
+
+.grid {
+  max-width: 1200px;
+}
+
+/* reveal grid after images loaded */
+.grid.are-images-unloaded {
+  opacity: 0;
+}
+
+.grid-item,
+.grid__col-sizer {
+  width: 32%;
+}
+
+.grid__gutter-sizer { width: 2%; }
+
+/* hide by default */
+.grid.are-images-unloaded .image-grid-item {
+  opacity: 0;
+}
+
+.grid-item {
+  margin-bottom: 20px;
+  float: left;
+}
+
+.grid-item img {
+  display: block;
+  max-width: 100%;
+}
+
+
+
 .grid-item--gigante {
-  width: 720px; 
+  width: 64%; 
 }
 
 .grid-item:hover {
   background: #A2C;
   border-color: white;
   cursor: pointer;
+}
+
+
+@media only screen and (max-width : 1024px) and (orientation : portrait) { 
+   
+    h1 {
+		text-align: center;
+		font-size: 1em;
+	}
+	
+	#hint {
+		text-align: center;
+		font-size: 0.65em;
+	}
+		
+	.grid-item--gigante {
+		width: 100%; 
+	}
+	
 }

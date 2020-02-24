@@ -16,7 +16,7 @@
       });
 	  tableau.extensions.dashboardContent.dashboard.getParametersAsync().then(function (parameters) {
         parameters.forEach(function (p) {
-          p.addEventListener(tableau.TableauEventType.ParameterChanged, (filterEvent) => {
+          p.addEventListener(tableau.TableauEventType.ParameterChanged, (parameterEvent) => {
             drawChartJS();
           });
         });
@@ -26,7 +26,11 @@
   });
   
 
-  function drawChartJS() {
+  function drawChartJS() {	
+    //$('.grid').masonry('destroy');
+    //$('.grid').removeData('masonry');
+	$('.grid').addClass('are-images-unloaded');
+	$('.grid-item').remove();  
 
     var worksheetName = tableau.extensions.settings.get("worksheet");
     //var categoryColumnNumber = tableau.extensions.settings.get("categoryColumnNumber");
@@ -56,22 +60,39 @@
       }
 	  
 	  //var parsed = JSON.stringify(data)
-	  //$("#elements").html(parsed);	  
-	
-	  var $grid = $('.grid').masonry({
-		  itemSelector: '.grid-item',    
-		  columnWidth: 300,
-		  isFitWidth: true
-		});
+	  //$("#elements").html(parsed);
+      var $elems = getItems(data);
+
+      $('.grid').append( $elems );
+
+      var $grid = $('.grid').masonry({
+		itemSelector: 'none', // select none at first
+		columnWidth: '.grid__col-sizer',
+		gutter: '.grid__gutter-sizer',
+		percentPosition: true,
+		stagger: 30,
+		// nicer reveal transition
+		visibleStyle: { transform: 'translateY(0)', opacity: 1 },
+		hiddenStyle: { transform: 'translateY(100px)', opacity: 0 },
+	  });
 	  
-	  var $items = getItems(data);
+	  $grid.imagesLoaded( function() {
+		$grid.removeClass('are-images-unloaded');
+		$grid.masonry( 'option', { itemSelector: '.grid-item' });
+		var $items = $grid.find('.grid-item');
+		$grid.masonry( 'appended', $items );
+	  });
 
-	  $grid.append( $items ).masonry( 'appended', $items );
-
-	  $grid.imagesLoaded().progress( function() {
-		  $grid.masonry();
-		});
-
+	//  var $grid = $('.grid').masonry({
+	//	  itemSelector: '.grid-item',    
+	//	  columnWidth: 300,
+	//	  isFitWidth: true
+	//	});
+	//  	  
+	//  $grid.imagesLoaded().progress( function() {
+	//	  $grid.masonry();
+	//	});	  
+	
 	  $grid.on( 'click', '.grid-item', function() {		
 		  $( this ).toggleClass('grid-item--gigante');		
 		  $grid.masonry();
@@ -80,7 +101,7 @@
 
     });
 	
-	unregisterFilterEventListener = worksheet.addEventListener(tableau.TableauEventType.FilterChanged, (filterEvent) => {
+	unregisterFilterEventListener = worksheet.addEventListener(tableau.TableauEventType.FilterChanged, (filterEvent) => {	  	
       drawChartJS();
     });
     unregisterMarkSelectionEventListener = worksheet.addEventListener(tableau.TableauEventType.MarkSelectionChanged, (markSelectionEvent) => {
