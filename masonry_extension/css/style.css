@@ -80,7 +80,7 @@ h1 {
 }
 
 .grid-item {
-  margin-bottom: 20px;
+  margin-bottom: 2%;
   float: left;
 }
 
@@ -95,11 +95,13 @@ h1 {
   width: 64%; 
 }
 
+/*
 .grid-item:hover {
   background: #A2C;
   border-color: white;
   cursor: pointer;
 }
+*/
 
 
 @media only screen and (max-width : 1024px) and (orientation : portrait) { 
