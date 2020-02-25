@@ -2,6 +2,8 @@
 
 (function () {
 	
+	const defaultIntervalInMin = '5';
+	
 	let unregisterSettingsEventListener = null;
 	let unregisterFilterEventListener = null;
 	let unregisterMarkSelectionEventListener = null;
@@ -132,8 +134,9 @@
 
   function configure() {
     const popupUrl=`https://gps-dataservice.github.io/masonry_extension/dialog.html`;
-    let defaultPayload="";
-    tableau.extensions.ui.displayDialogAsync(popupUrl, defaultPayload, { width: 500, height: 500 }).then((closePayload) => {
+    //let defaultPayload="";
+    //tableau.extensions.ui.displayDialogAsync(popupUrl, defaultPayload, { width: 500, height: 500 }).then((closePayload) => {
+	tableau.extensions.ui.displayDialogAsync(popupUrl, defaultIntervalInMin, { width: 500, height: 500 }).then((closePayload) => {
       drawChartJS();
     }).catch((error) => {
       switch (error.errorCode) {
