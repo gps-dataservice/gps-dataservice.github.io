@@ -128,12 +128,16 @@
 		item.className = 'grid-item ' + widthClass;
 		var img = document.createElement('img'); 
 		img.src = img_src
+		//img.setAttribute('data-src', img_src);
+		//img.setAttribute('class', 'lazyload');			
+		//img.setAttribute("style", "will-change: transform; transform: translateZ(0);");
 		item.appendChild(img);  
 		return item;  
 	}
 
   function configure() {
-    const popupUrl=`https://gps-dataservice.github.io/masonry_extension/dialog.html`;
+    //const popupUrl=`${window.location.origin}/dialog.html`;
+	const popupUrl=`https://gps-dataservice.github.io/masonry_extension/dialog.html`;
     let defaultPayload="";
     tableau.extensions.ui.displayDialogAsync(popupUrl, defaultPayload, { width: 500, height: 500 }).then((closePayload) => {
 	//tableau.extensions.ui.displayDialogAsync(popupUrl, defaultIntervalInMin, { width: 500, height: 500 }).then((closePayload) => {

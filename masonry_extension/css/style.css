@@ -81,14 +81,14 @@ h1 {
 
 .grid-item {
   margin-bottom: 20px;
-  float: left;
+  float: left;  
 }
 
 .grid-item img {
   display: block;
-  max-width: 100%;
+  max-width: 100%;  
+  will-change: auto;
 }
-
 
 
 .grid-item--gigante {
