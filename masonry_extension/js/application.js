@@ -10,12 +10,9 @@
 	let unregisterParameterEventListener = null;
 	
   $(document).ready(function () {
-    tableau.extensions.initializeAsync({ 'configure':configure }).then(function () {
+    tableau.extensions.initializeAsync().then(function () {
       drawChartJS();
 	  
-      unregisterSettingsEventListener = tableau.extensions.settings.addEventListener(tableau.TableauEventType.SettingsChanged, (settingsEvent) => {
-        drawChartJS();
-      });
 	  tableau.extensions.dashboardContent.dashboard.getParametersAsync().then(function (parameters) {
         parameters.forEach(function (p) {
           p.addEventListener(tableau.TableauEventType.ParameterChanged, (parameterEvent) => {
@@ -28,61 +25,88 @@
   });
   
 
-  function drawChartJS() {	
-    //$('.grid').masonry('destroy');
-    //$('.grid').removeData('masonry');
-	$('.grid').addClass('are-images-unloaded');
-	$('.grid-item').remove();  
+  function drawChartJS() {
+	  
+	if ($('.grid').data('masonry')) {
+		$('.grid').masonry('destroy');
+		$('.grid').removeData('masonry'); 
+		$('.grid-item').remove();  		
+	}
+    
+	$('.grid').addClass('are-images-unloaded');	
 
-    var worksheetName = tableau.extensions.settings.get("worksheet");
-    //var categoryColumnNumber = tableau.extensions.settings.get("categoryColumnNumber");
-    var valueColumnNumber = tableau.extensions.settings.get("valueColumnNumber");
+	const worksheets = tableau.extensions.dashboardContent.dashboard.worksheets;
+    // Finds a worksheet called pictureData
+    var worksheet = worksheets.find(function (sheet) {
+      return sheet.name === "pictureData";
+    });
 
-    const worksheets=tableau.extensions.dashboardContent.dashboard.worksheets;
-	
+    	
 	if (unregisterFilterEventListener != null) {
       unregisterFilterEventListener();
     }
     if (unregisterMarkSelectionEventListener != null) {
       unregisterMarkSelectionEventListener();
-    }
-	
-    var worksheet=worksheets.find(function (sheet) {
-      return sheet.name===worksheetName;
-    });	
+    }	
 	
     worksheet.getSummaryDataAsync().then(function (sumdata) {
       //var labels = [];
-      var data = [];
+      //var picture_urls = [];
+	  //var likes = [];
       var worksheetData = sumdata.data;
+	  var pictureColumn = sumdata.columns.find(column => column.fieldName === "picture");  
+	  var likesColumn = sumdata.columns.find(column => column.fieldName.includes("likes"));  
+	  var commentsColumn = sumdata.columns.find(column => column.fieldName.includes("comments")); 
+	  var engagementColumn = sumdata.columns.find(column => column.fieldName.includes("engagement_rate"));  	  
+	  
       
-      for (var i=0; i<worksheetData.length; i++) {
-        //labels.push(worksheetData[i][categoryColumnNumber-1].formattedValue);
-        data.push(worksheetData[i][valueColumnNumber-1].value);
-      }
+      //for (var i=0; i<worksheetData.length; i++) {
+      //  //likes.push(worksheetData[i][0][0].value);
+      //  picture_urls.push(worksheetData[i][pictureColumn.index].value);
+      //}
+	  
+	  //document.getElementById("elements").innerHTML = sumdata.columns[0].fieldName
+	  console.log(sumdata.data)
+	  console.log(sumdata.columns)
+	  //console.log(likesColumn)
+
 	  
 	  //var parsed = JSON.stringify(data)
 	  //$("#elements").html(parsed);
-      var $elems = getItems(data);
+      var elems = getItems(worksheetData, pictureColumn.index, likesColumn.index, commentsColumn.index, engagementColumn.index);
 
-      $('.grid').append( $elems );
+      $('.grid').append( $(elems) );
 
-      var $grid = $('.grid').masonry({
-		itemSelector: 'none', // select none at first
-		columnWidth: '.grid__col-sizer',
-		gutter: '.grid__gutter-sizer',
-		percentPosition: true,
-		stagger: 30,
-		// nicer reveal transition
-		visibleStyle: { transform: 'translateY(0)', opacity: 1 },
-		hiddenStyle: { transform: 'translateY(100px)', opacity: 0 },
-	  });
+    //  var $grid = $('.grid').masonry({
+	//	itemSelector: 'none', // select none at first
+	//	columnWidth: '.grid__col-sizer',
+	//	gutter: '.grid__gutter-sizer',
+	//	percentPosition: true,
+	//	stagger: 30,
+	//	// nicer reveal transition
+	//	visibleStyle: { transform: 'translateY(0)', opacity: 1 },
+	//	hiddenStyle: { transform: 'translateY(100px)', opacity: 0 }
+	//  });
+	//  
+	//  $grid.imagesLoaded( function() {
+	//	$grid.removeClass('are-images-unloaded');
+	//	$grid.masonry( 'option', { itemSelector: '.grid-item' });
+	//	var $items = $grid.find('.grid-item');
+	//	$grid.masonry( 'appended', $items );
+	//  });
 	  
-	  $grid.imagesLoaded( function() {
+	  var $grid = $('.grid').imagesLoaded( function() {		
+		$grid.masonry({
+			itemSelector: '.grid-item', // select none at first
+			columnWidth: '.grid__col-sizer',
+			gutter: '.grid__gutter-sizer',
+			percentPosition: true,
+			stagger: 30,
+			// nicer reveal transition
+			visibleStyle: { transform: 'translateY(0)', opacity: 1 },
+			hiddenStyle: { transform: 'translateY(100px)', opacity: 0 }
+			});
 		$grid.removeClass('are-images-unloaded');
-		$grid.masonry( 'option', { itemSelector: '.grid-item' });
-		var $items = $grid.find('.grid-item');
-		$grid.masonry( 'appended', $items );
 	  });
 
 	//  var $grid = $('.grid').masonry({
@@ -95,11 +119,19 @@
 	//	  $grid.masonry();
 	//	});	  
 	
-	  $grid.on( 'click', '.grid-item', function() {		
-		  $( this ).toggleClass('grid-item--gigante');		
+	//  $grid.on( 'click', '.grid-item', function() {		
+	//	  $( this ).toggleClass('grid-item--gigante');		
+	//	  $grid.masonry();
+	//  });	  
+	  
+	  $grid.find('figcaption').click(function(event) {	
+	  
+		  event.preventDefault();
+		  
+		  $( this ).closest('.grid-item').toggleClass('grid-item--gigante');
+		  
 		  $grid.masonry();
-	  });	  
-	
+	  });	
 
     });
 	
@@ -112,44 +144,51 @@
 	
   }
   
-  function getItems(dataArray) {
+  function getItems(dataArray, img_col, likes_col, comments_col, engagement_col) {
 		var items = [];
 		for ( var i = 0; i < dataArray.length; i++ ) {
-			items.push(getImageItem(dataArray[i]));
+			items.push(getImageItem(dataArray[i][img_col].value,dataArray[i][likes_col].value,dataArray[i][comments_col].value,dataArray[i][engagement_col].value));
 			}
 		return $( items );
 	}
 	
-  function getImageItem(img_src) {
-		var item = document.createElement('div');
-		var wRand = Math.random();
-		var hRand = Math.random();
-		var widthClass = wRand > 0.8 ? 'grid-item--width3' : wRand > 0.6 ? 'grid-item--width2' : '';  
-		item.className = 'grid-item ' + widthClass;
+  function getImageItem(img_src, likes_src, comments_src, engagement_src) {
+		//create grid item
+		var item = document.createElement('div');		
+		item.className = 'grid-item'
+		
+		//create image element
 		var img = document.createElement('img'); 
-		img.src = img_src
-		//img.setAttribute('data-src', img_src);
-		//img.setAttribute('class', 'lazyload');			
-		//img.setAttribute("style", "will-change: transform; transform: translateZ(0);");
-		item.appendChild(img);  
+		img.src = img_src		 
+		
+		//create information overlay element
+		var figcaption = document.createElement('figcaption');		
+		
+		var list = document.createElement('ul');
+		list.className = 'metric';		
+    
+        var likes = document.createElement('li');
+		likes.className = 'likes';		
+		likes.innerHTML = '<span>' + likes_src + '</span> <span class="glyphicon glyphicon-thumbs-up"></span>';
+		list.appendChild(likes);
+		
+		var comments = document.createElement('li');
+		comments.className = 'comments';		
+		comments.innerHTML = '<span>' + comments_src + '</span> <span class="glyphicon glyphicon-comment"></span>';
+		list.appendChild(comments);
+		
+		var engagement = document.createElement('li');
+		engagement.className = 'engagement';		
+		engagement.innerHTML = '<span>' + engagement_src + '%' + '</span> <span class="glyphicon glyphicon-star"></span>';
+		list.appendChild(engagement);
+
+        figcaption.appendChild(list);
+        
+		//append image and overlay
+		item.appendChild(img); 
+		item.appendChild(figcaption);        
+    	
 		return item;  
 	}
 
-  function configure() {
-    //const popupUrl=`${window.location.origin}/dialog.html`;
-	const popupUrl=`https://gps-dataservice.github.io/masonry_extension/dialog.html`;
-    let defaultPayload="";
-    tableau.extensions.ui.displayDialogAsync(popupUrl, defaultPayload, { width: 500, height: 500 }).then((closePayload) => {
-	//tableau.extensions.ui.displayDialogAsync(popupUrl, defaultIntervalInMin, { width: 500, height: 500 }).then((closePayload) => {
-      drawChartJS();
-    }).catch((error) => {
-      switch (error.errorCode) {
-        case tableau.ErrorCodes.DialogClosedByUser:
-          console.log("Dialog was closed by user");
-          break;
-        default:
-          console.error(error.message);
-      }
-    });
-  }
 })();
