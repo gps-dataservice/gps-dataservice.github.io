@@ -110,6 +110,16 @@ h1 {
   transition: all 0.35s;
 }
 
+
+.grid-item:hover figcaption::before,
+.grid-item:hover .metric
+.grid-item:active figcaption::before,
+.grid-item:active .metric {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* 
 @media (hover: hover) and (pointer: fine) {
     .grid-item:hover figcaption::before,
 	.grid-item:hover .metric {
@@ -117,6 +127,7 @@ h1 {
 	  transform: translate3d(0, 0, 0);
 	}
 }
+*/
 
 
 @media only screen and (max-width : 960px) { 
@@ -157,10 +168,5 @@ h1 {
 		rgba(72, 76, 97, 0.5) 99%
 	  );
 	}	
-	
-	.grid-item--gigante figcaption::before,
-	.grid-item--gigante .metric {
-	  opacity: 1;
-	  transform: translate3d(0, 0, 0);
-	}
+
 }
