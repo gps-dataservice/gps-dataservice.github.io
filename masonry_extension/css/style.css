@@ -155,10 +155,5 @@ h1 {
 		rgba(72, 76, 97, 0.5) 99%
 	  );
 	}
-	
-	.grid-item--gigante figcaption::before,
-	.grid-item--gigante .metric {
-	  opacity: 1;
-	  transform: translate3d(0, 0, 0);
-	}
+
 }
