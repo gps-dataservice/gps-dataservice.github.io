@@ -49,52 +49,20 @@
       unregisterMarkSelectionEventListener();
     }	
 	
-    worksheet.getSummaryDataAsync().then(function (sumdata) {
-      //var labels = [];
-      //var picture_urls = [];
-	  //var likes = [];
+    worksheet.getSummaryDataAsync().then(function (sumdata) {      
       var worksheetData = sumdata.data;
 	  var pictureColumn = sumdata.columns.find(column => column.fieldName === "picture");  
 	  var likesColumn = sumdata.columns.find(column => column.fieldName.includes("likes"));  
 	  var commentsColumn = sumdata.columns.find(column => column.fieldName.includes("comments")); 
-	  var engagementColumn = sumdata.columns.find(column => column.fieldName.includes("engagement_rate"));  	  
-	  
+	  var engagementColumn = sumdata.columns.find(column => column.fieldName.includes("engagement_rate"));       
       
-      //for (var i=0; i<worksheetData.length; i++) {
-      //  //likes.push(worksheetData[i][0][0].value);
-      //  picture_urls.push(worksheetData[i][pictureColumn.index].value);
-      //}
-	  
-	  //document.getElementById("elements").innerHTML = sumdata.columns[0].fieldName
 	  console.log(sumdata.data)
 	  console.log(sumdata.columns)
-	  //console.log(likesColumn)
-
 	  
-	  //var parsed = JSON.stringify(data)
-	  //$("#elements").html(parsed);
       var elems = getItems(worksheetData, pictureColumn.index, likesColumn.index, commentsColumn.index, engagementColumn.index);
-
       $('.grid').append( $(elems) );
 
-    //  var $grid = $('.grid').masonry({
-	//	itemSelector: 'none', // select none at first
-	//	columnWidth: '.grid__col-sizer',
-	//	gutter: '.grid__gutter-sizer',
-	//	percentPosition: true,
-	//	stagger: 30,
-	//	// nicer reveal transition
-	//	visibleStyle: { transform: 'translateY(0)', opacity: 1 },
-	//	hiddenStyle: { transform: 'translateY(100px)', opacity: 0 }
-	//  });
-	//  
-	//  $grid.imagesLoaded( function() {
-	//	$grid.removeClass('are-images-unloaded');
-	//	$grid.masonry( 'option', { itemSelector: '.grid-item' });
-	//	var $items = $grid.find('.grid-item');
-	//	$grid.masonry( 'appended', $items );
-	//  });
-	  
+    	  
 	  var $grid = $('.grid').imagesLoaded( function() {		
 		$grid.masonry({
 			itemSelector: '.grid-item', // select none at first
@@ -109,27 +77,10 @@
 		$grid.removeClass('are-images-unloaded');
 	  });
 
-	//  var $grid = $('.grid').masonry({
-	//	  itemSelector: '.grid-item',    
-	//	  columnWidth: 300,
-	//	  isFitWidth: true
-	//	});
-	//  	  
-	//  $grid.imagesLoaded().progress( function() {
-	//	  $grid.masonry();
-	//	});	  
-	
-	//  $grid.on( 'click', '.grid-item', function() {		
-	//	  $( this ).toggleClass('grid-item--gigante');		
-	//	  $grid.masonry();
-	//  });	  
-	  
-	  $grid.find('figcaption').click(function(event) {	
-	  
-		  event.preventDefault();
 		  
-		  $( this ).closest('.grid-item').toggleClass('grid-item--gigante');
-		  
+	  $grid.find('figcaption').click(function(event) {		  
+		  event.preventDefault();		  
+		  $( this ).closest('.grid-item').toggleClass('grid-item--gigante');		  
 		  $grid.masonry();
 	  });	
 
@@ -149,7 +100,7 @@
 		for ( var i = 0; i < dataArray.length; i++ ) {
 			items.push(getImageItem(dataArray[i][img_col].value,dataArray[i][likes_col].value,dataArray[i][comments_col].value,dataArray[i][engagement_col].value));
 			}
-		return $( items );
+		return items;
 	}
 	
   function getImageItem(img_src, likes_src, comments_src, engagement_src) {
